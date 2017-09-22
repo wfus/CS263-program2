@@ -1,0 +1,18 @@
+# Folders #
+###########
+__pycache__/
+*.egg-info/
+
+# Junk #
+########
+.DS_Store*
+.*.swp
+*.swp
+*.log
+*~
+
+# Binary Stuff #
+################
+hasher
+cracker
+*.o

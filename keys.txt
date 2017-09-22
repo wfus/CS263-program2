@@ -1,0 +1,21 @@
+Question 1. What are the decryption key(s)?
+            Represent all binary data as hex strings.
+
+TODO
+
+Question 2: Are the keys above symmetric or asymmetric? What type of keys are
+            they (e.g. RSA)?
+
+TODO
+
+Question 3. Describe the reverse engineering methods by which you discovered the
+            key(s).
+
+TODO
+
+Question 4. Describe the manner in which you actually decrypted the database.
+            (note that your method of decryption should actually use the key
+            obtained, and thus should not rely on running any function in
+            libpassdb).
+
+TODO
