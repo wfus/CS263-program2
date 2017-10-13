@@ -1,34 +1,26 @@
-#include "stdio.h"
-#include "stdint.h"
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <dlfcn.h>
+
+#define MAXBUFLEN 1000000
 
 
+void load_file(char* input, const char* filepath) {
+	FILE *fp = fopen(filepath, "rb");
+	if (fp != NULL) {
+		size_t newLen = fread(input, sizeof(char), MAXBUFLEN, fp);
+		if (newLen == 0) {
+			fputs("Error reading file", stderr);
+		} else {
+			input[++newLen] = '\0'; /* Just to be safe. */
+		}
 
-char* load_file(char const* path)
-{
-    char* buffer = 0;
-    long length;
-    FILE * f = fopen (path, "rb"); //was "rb"
-
-    if (f)
-    {
-      fseek (f, 0, SEEK_END);
-      length = ftell (f);
-      fseek (f, 0, SEEK_SET);
-      buffer = (char*)malloc ((length+1)*sizeof(char));
-      if (buffer)
-      {
-        fread (buffer, sizeof(char), length, f);
-      }
-      fclose (f);
-    }
-    buffer[length] = '\0';
-    // for (int i = 0; i < length; i++) {
-    //     printf("buffer[%d] == %c\n", i, buffer[i]);
-    // }
-    //printf("buffer = %s\n", buffer);
-
-    return buffer;
+		fclose(fp);
+	}
 }
+
+
 
 int main()
 {
@@ -36,11 +28,41 @@ int main()
 	uint8_t* output = malloc(100000);
 	uint8_t* key = malloc(16);
 
-	*key = "\x3b\x99\xc2\x16\xf1\xae\x2d\xd6\x9b\x70\xf5\xe8\x00\xfc\x9a\xec";	
-	dbinput = load_file("/home/httpd/reverse-engineering/leaked_app/password.db");
+	key = "\x3b\x99\xc2\x16\xf1\xae\x2d\xd6\x9b\x70\xf5\xe8\x00\xfc\x9a\xec";	
+	load_file(dbinput, "/home/httpd/reverse-engineering/leaked_app/password.db");
 
-	printf(dbinput);
-	printf(key);
+	printf("%s", dbinput);
+	printf("\n\n");
+	printf("%s", key);
+	printf("\n\n");
+
+
+	void* handle;
+	void (*decrypt)(uint8_t*, uint8_t*, uint8_t*);
+	char* error;
+
+	handle = dlopen ("/home/httpd/reverse-engineering/leaked_app/libaes.so.1", RTLD_LAZY);
+	error = dlerror ();
+	if (error) {
+		printf ("%s\n", error);
+		exit (1);
+	}
+
+	decrypt = dlsym(handle, "AES128_ECB_decrypt");
+	decrypt(dbinput, key, output);
+
+	printf("%s", output);
+	printf("\n\n");
+
+
+
+
+
+
+
+	//free(dbinput);
+	//free(output);
+	//free(key);
 
 	return 0;
 }

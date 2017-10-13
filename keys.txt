@@ -1,17 +1,20 @@
 Question 1. What are the decryption key(s)?
             Represent all binary data as hex strings.
 
-TODO
+\x3b99c216f1ae2dd69b70f5e800fc9aec
+
 
 Question 2: Are the keys above symmetric or asymmetric? What type of keys are
             they (e.g. RSA)?
 
-TODO
+The key above here is asymmetric - there is a 
 
 Question 3. Describe the reverse engineering methods by which you discovered the
             key(s).
 
-TODO
+
+I performed a objdump on both the proton binary and the libraries that were supplied. 
+I noticed a AES128_ECB_decrypt and AES128_ECB_encrypt function
 
 Question 4. Describe the manner in which you actually decrypted the database.
             (note that your method of decryption should actually use the key
