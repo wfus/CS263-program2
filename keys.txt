@@ -7,18 +7,17 @@ Question 1. What are the decryption key(s)?
 Question 2: Are the keys above symmetric or asymmetric? What type of keys are
             they (e.g. RSA)?
 
-The key above here is asymmetric - there is a 
+The key above here is symmetric, since the crypto library being used is AES_128_ECB, which gives away that they are using AES encryption, with 128 bits and Electronic codebook where blocks are encrypted sequentially without an IV. 
 
 Question 3. Describe the reverse engineering methods by which you discovered the
             key(s).
 
 
-I performed a objdump on both the proton binary and the libraries that were supplied. 
-I noticed a AES128_ECB_decrypt and AES128_ECB_encrypt function
+I performed a objdump on both the proton binary and the libraries that were supplied. I noticed a AES128_ECB_decrypt and AES128_ECB_encrypt function. At first I just set an rwatch to the locations of AES128_ECB_decrypt, but it wasn't working because proton forks off a child process to process requests. Therefore, I set GDB to follow child forks without detaching from the parent fork, which allowed me break at AES128_ECB_decrypt. After that, I could find the parameters passed to the function by examining (%ebp + 4), (%ebp + 8), (%ebp + 12), one of which was the key. 
 
 Question 4. Describe the manner in which you actually decrypted the database.
             (note that your method of decryption should actually use the key
             obtained, and thus should not rely on running any function in
             libpassdb).
 
-TODO
+I wrote a python script that uses the methods AES123_ECB_decrypt in the dynamic library, since I wanted to make sure that the decryption method matched what was used in Proton. This was done in case Proton had a modified version of the AES128_decrypt that differed from the standard. 
