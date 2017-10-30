@@ -14,7 +14,18 @@
 # Python "requests" library. Please specify any other dependencies by adding
 # their installation commands to setup.sh.
 #
-# TODO: briefly describe how this cracker works.
+# Description of the attack: 
+# We mimic the GET request that the server uses for authentication. The GET
+# request is in the form ?pw=PASSWORD&un=USERNAME, where PASSWORD and 
+# USERNAME is encoded in the ASCII number corresponding to the letter with 
+# a dash in between each letter. Also, the server will return a 200 OK if
+# the username and password combination worked. Therefore, we just brute
+# force the username and password combinations from RockYouTop25000 until 
+# either the passwords run out or we get a 200 OK. 
+#
+# Note that the server will reject the authentication request if we did not
+# have the header {"Referer": $MAIN_PAGE_URL}, so we had to add that onto
+# our constructed GET request.
 
 import sys
 import requests

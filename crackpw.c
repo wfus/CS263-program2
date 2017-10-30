@@ -1,7 +1,11 @@
 /**
  * crackpw.c
- *
- * TODO: briefly describe how this cracker works.
+ * -----------------
+ * This cracker basically just gets a list of commonly used passwords, in 
+ * this case RockYouTop25000, and then hashes each of the passwords on that
+ * list. If the hash matches with the hashed password in the database, we
+ * have a match and we can return. If we go through all possibilities and
+ * don't find a match, we return 0 for unsuccessful search.
  */
 
 #include "hashpw.h"  // so that you can call hashpw()
@@ -25,9 +29,6 @@ int crackpw(char dest[256], unsigned int hash) {
     char line[256];
 
     while (fgets(line, sizeof(line), file)) {
-        /* note that fgets don't strip the terminating \n, checking its
-           presence would allow to handle lines longer that sizeof(line) */
-        // printf("%s", line);
 	int length = strlen(line) - 1;
         if (hashpw(line, length) == hash) {
 		strncpy(dest, line, length);

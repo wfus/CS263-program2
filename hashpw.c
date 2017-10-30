@@ -16,7 +16,7 @@ movl   $0x0,-0xc(%ebp)      // Initialize 4 byte variable A
 movl   $0x0,-0x8(%ebp)      // Initialize 4 byte variable B, C
 jmp    8048c59 <calculate_pw_hash+0x3e>
 
-
+// B is used as a counter, looping through the plaintext string
 mov    -0x8(%ebp),%edx     // move B to %edx
 mov    0x8(%ebp),%eax      // move 1st parameter to eax
 add    %edx,%eax           // add B and 2nd parameter
