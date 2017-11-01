@@ -1,0 +1,54 @@
+080489f0 <AES128_ECB_decrypt@plt>:
+ 80489f0:       ff 25 54 c0 04 08       jmp    *0x804c054
+ 80489f6:       68 90 00 00 00          push   $0x90
+ 80489fb:       e9 c0 fe ff ff          jmp    80488c0 <_init+0x30>
+
+
+08048a20 <AES128_ECB_encrypt@plt>:
+ 8048a20:       ff 25 60 c0 04 08       jmp    *0x804c060
+ 8048a26:       68 a8 00 00 00          push   $0xa8
+ 8048a2b:       e9 90 fe ff ff          jmp    80488c0 <_init+0x30>
+
+
+
+08048c1b <calculate_pw_hash>:
+ 8048c1b:       55                      push   %ebp
+ 8048c1c:       89 e5                   mov    %esp,%ebp
+ 8048c1e:       83 ec 10                sub    $0x10,%esp
+ 8048c21:       c7 45 f4 00 00 00 00    movl   $0x0,-0xc(%ebp)
+ 8048c28:       c7 45 f8 00 00 00 00    movl   $0x0,-0x8(%ebp)
+ 8048c2f:       eb 28                   jmp    8048c59 <calculate_pw_hash+0x3e>
+ 8048c31:       8b 55 f8                mov    -0x8(%ebp),%edx
+ 8048c34:       8b 45 08                mov    0x8(%ebp),%eax
+ 8048c37:       01 d0                   add    %edx,%eax
+ 8048c39:       0f b6 00                movzbl (%eax),%eax
+ 8048c3c:       0f be c0                movsbl %al,%eax
+ 8048c3f:       89 45 fc                mov    %eax,-0x4(%ebp)
+ 8048c42:       8b 45 fc                mov    -0x4(%ebp),%eax
+ 8048c45:       c1 e0 08                shl    $0x8,%eax
+ 8048c48:       89 c2                   mov    %eax,%edx
+ 8048c4a:       8b 45 fc                mov    -0x4(%ebp),%eax
+ 8048c4d:       01 d0                   add    %edx,%eax
+ 8048c4f:       31 45 f4                xor    %eax,-0xc(%ebp)
+ 8048c52:       d1 65 f4                shll   -0xc(%ebp)
+ 8048c55:       83 45 f8 01             addl   $0x1,-0x8(%ebp)
+ 8048c59:       8b 45 f8                mov    -0x8(%ebp),%eax
+ 8048c5c:       3b 45 0c                cmp    0xc(%ebp),%eax
+ 8048c5f:       7c d0                   jl     8048c31 <calculate_pw_hash+0x16>
+ 8048c61:       83 7d 0c 00             cmpl   $0x0,0xc(%ebp)
+ 8048c65:       7e 0c                   jle    8048c73 <calculate_pw_hash+0x58>
+ 8048c67:       8b 45 08                mov    0x8(%ebp),%eax
+ 8048c6a:       0f b6 00                movzbl (%eax),%eax
+ 8048c6d:       0f be c0                movsbl %al,%eax
+ 8048c70:       09 45 f4                or     %eax,-0xc(%ebp)
+ 8048c73:       8b 45 f4                mov    -0xc(%ebp),%eax
+ 8048c76:       35 ce fa ed fe          xor    $0xfeedface,%eax
+ 8048c7b:       89 45 f4                mov    %eax,-0xc(%ebp)
+ 8048c7e:       8b 45 f4                mov    -0xc(%ebp),%eax
+ 8048c81:       c9                      leave
+ 8048c82:       c3                      ret
+
+
+
+var url = '$' + Math.random().toString().replace('.', '') + '?pw=' + chatmax.scramble(chatmax.password) + '&un=' + chatmax.scramble(chatmax.username) + '&msg=' + chatmax.scramble(_14) + '&to=' + chatmax.scramble(_13.items[0].value) + '.inbox';
+            var xhr = new XMLHttpRequest();

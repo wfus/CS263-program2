@@ -1,21 +1,25 @@
 Question 1. What are the decryption key(s)?
             Represent all binary data as hex strings.
 
-TODO
+\x3b99c216f1ae2dd69b70f5e800fc9aec
+
 
 Question 2: Are the keys above symmetric or asymmetric? What type of keys are
             they (e.g. RSA)?
 
-TODO
+The key above here is symmetric, since the crypto library being used is AES_128_ECB, which gives away that they are using AES encryption, with 128 bits and Electronic codebook where blocks are encrypted sequentially without an IV. 
 
 Question 3. Describe the reverse engineering methods by which you discovered the
             key(s).
 
-TODO
+
+I performed a objdump on both the proton binary and the libraries that were supplied. I noticed a AES128_ECB_decrypt and AES128_ECB_encrypt function. At first I just set an rwatch to the locations of AES128_ECB_decrypt, but it wasn't working because proton forks off a child process to process requests. Therefore, I set GDB to follow child forks without detaching from the parent fork, which allowed me break at AES128_ECB_decrypt. After that, I could find the parameters passed to the function by examining the memory location around the stack pointer. The key showed up with the label <extra_token> in gdb, and it was also the only thing that was actually 128 bits long. It was confirmed that that was the correct key when it decrypted the password database into something that made sense.  
 
 Question 4. Describe the manner in which you actually decrypted the database.
             (note that your method of decryption should actually use the key
             obtained, and thus should not rely on running any function in
             libpassdb).
 
-TODO
+I wrote a python script that uses the methods AES123_ECB_decrypt in the dynamic library, since I wanted to make sure that the decryption method matched what was used in Proton. This was done in case Proton had a modified version of the AES128_decrypt that differed from the standard. 
+
+The python used Cython and CFFI in order to dlopen libaes.1.so, and then called the C library function to actually decrypt the contents with the decryption key. Then, I separated the contents with \t in order to split the usernames and the passwords, which are grouped together in the same line with null characters separating them. Since I was getting weird build errors when trying to install CFFI on the virtual machine, I did this on my own computer. I also wrote a C program to load the library and decrypt the message, as the file leaked_app/decryptdb.c.  
